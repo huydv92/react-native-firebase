@@ -56,6 +56,7 @@ import auth, {
   verifyBeforeUpdateEmail,
   getAdditionalUserInfo,
   getCustomAuthDomain,
+  FacebookAuthProvider,
 } from '../lib';
 
 // @ts-ignore - We don't mind missing types here
@@ -402,6 +403,10 @@ describe('Auth', function () {
 
     it('`getCustomAuthDomain` function is properly exposed to end user', function () {
       expect(getCustomAuthDomain).toBeDefined();
+    });
+
+    it('`FacebookAuthProvider` class is properly exposed to end user', function () {
+      expect(FacebookAuthProvider).toBeDefined();
     });
   });
 });
