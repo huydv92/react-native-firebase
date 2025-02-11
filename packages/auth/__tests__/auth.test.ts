@@ -1,6 +1,4 @@
 import { afterAll, beforeAll, describe, expect, it } from '@jest/globals';
-// @ts-ignore test
-import FirebaseModule from '../../app/lib/internal/FirebaseModule';
 
 import auth, {
   firebase,
@@ -66,7 +64,7 @@ import auth, {
   OAuthProvider,
   OIDCAuthProvider,
   PhoneAuthProvider,
-  TwitterAuthProvider
+  TwitterAuthProvider,
 } from '../lib';
 
 // @ts-ignore - We don't mind missing types here
