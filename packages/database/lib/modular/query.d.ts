@@ -904,6 +904,24 @@ export function setWithPriority(
 export function get(query: Query): Promise<DataSnapshot>;
 
 /**
+ * Detaches a callback previously attached with the corresponding on*() (onValue, onChildAdded) listener. 
+ * Note: This is not the recommended way to remove a listener. Instead, please use the returned callback function from the respective on* callbacks.
+ * Detach a callback previously attached with on*(). Calling off() on a parent listener will not automatically remove listeners registered on child nodes, off() must also be called on any child listeners to remove the callback.
+ * If a callback is not specified, all callbacks for the specified eventType will be removed. 
+ * Similarly, if no eventType is specified, all callbacks for the Reference will be removed.
+ * Individual listeners can also be removed by invoking their unsubscribe callbacks.
+ * 
+ * @param query - The query to run
+ * @param eventType One of the following strings: "value", "child_added", "child_changed", "child_removed", or "child_moved.
+ * @param callback
+ */
+export declare function off(
+  query: Query,
+  eventType?: EventType,
+  callback?: (snapshot: DataSnapshot, previousChildName?: string | null) => unknown,
+): void;
+
+/**
  * Gets a `Reference` for the location at the specified relative path.
  *
  * The relative path can either be a simple child name (for example, "ada") or

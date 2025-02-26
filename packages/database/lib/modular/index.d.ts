@@ -1,5 +1,5 @@
 import { ReactNativeFirebase } from '@react-native-firebase/app';
-import { DataSnapshot, FirebaseDatabaseTypes, Query, QueryConstraint } from '..';
+import { FirebaseDatabaseTypes } from '..';
 
 import FirebaseApp = ReactNativeFirebase.FirebaseApp;
 import Database = FirebaseDatabaseTypes.Module;
@@ -227,17 +227,6 @@ export function increment(delta: number): object;
  * @param persistent
  */
 export declare function enableLogging(enabled: boolean, persistent?: boolean): any;
-
-/**
- * Detaches a callback previously attached with the corresponding on*() (onValue, onChildAdded) listener. 
- * Note: This is not the recommended way to remove a listener. 
- * Instead, please use the returned callback function from the respective on* callbacks.
- * 
- * @param query 
- * @param eventType 
- * @param callback 
- */
-export declare function off(query: Query, eventType?: EventType, callback?: (snapshot: DataSnapshot, previousChildName?: string | null) => unknown): void;
 
 export * from './query';
 export * from './transaction';
