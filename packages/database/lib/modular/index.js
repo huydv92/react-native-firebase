@@ -121,11 +121,7 @@ export function increment(delta) {
 }
 
 export function enableLogging(enabled, persistent) {
-  throw new Error("enableLogging() is not implemented");
-}
-
-export function off(query, eventType) {
-  throw new Error("off() is not implemented");
+  throw new Error('enableLogging() is not implemented');
 }
 
 export * from './query';
