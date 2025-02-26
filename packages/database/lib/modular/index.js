@@ -24,8 +24,8 @@ export function getDatabase(app, url) {
  * @param {number} port
  * @returns {void}
  */
-export function connectDatabaseEmulator(db, host, port, options) {
-  db.useEmulator(host, port, options);
+export function connectDatabaseEmulator(db, host, port) {
+  db.useEmulator(host, port);
 }
 
 /**
@@ -98,6 +98,13 @@ export function forceWebSockets() {
 }
 
 /**
+ * @returns {object}
+ */
+export function serverTimestamp() {
+  return firebase.database.ServerValue.TIMESTAMP;
+}
+
+/**
  * @param {Database} db
  * @returns {Date}
  */
@@ -106,18 +113,19 @@ export function getServerTime(db) {
 }
 
 /**
- * @returns {object}
- */
-export function serverTimestamp() {
-  return firebase.database.ServerValue.TIMESTAMP;
-}
-
-/**
  * @param {number} delta
  * @returns {object}
  */
 export function increment(delta) {
   return firebase.database.ServerValue.increment(delta);
+}
+
+export function enableLogging(enabled, persistent) {
+  throw new Error("enableLogging() is not implemented");
+}
+
+export function off(query, eventType) {
+  throw new Error("off() is not implemented");
 }
 
 export * from './query';
