@@ -12,8 +12,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.RemoteInput;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.RemoteInput;
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
@@ -39,10 +39,9 @@ public class DisplayNotificationTask extends AsyncTask<Void, Void, Void> {
   private final NotificationManager notificationManager;
 
   DisplayNotificationTask(
-    Context context, ReactApplicationContext reactContext,
-    NotificationManager notificationManager,
-    Bundle notification, Promise promise
-  ) {
+      Context context, ReactApplicationContext reactContext,
+      NotificationManager notificationManager,
+      Bundle notification, Promise promise) {
     this.contextWeakReference = new WeakReference<>(context);
     this.reactContextWeakReference = new WeakReference<>(reactContext);
 
@@ -60,7 +59,8 @@ public class DisplayNotificationTask extends AsyncTask<Void, Void, Void> {
   @Override
   protected Void doInBackground(Void... voids) {
     Context context = contextWeakReference.get();
-    if (context == null) return null;
+    if (context == null)
+      return null;
 
     try {
       Class intentClass = getMainActivityClass(context);
@@ -68,9 +68,8 @@ public class DisplayNotificationTask extends AsyncTask<Void, Void, Void> {
       if (intentClass == null) {
         if (promise != null) {
           promise.reject(
-            "notification/display_notification_error",
-            "Could not find main activity class"
-          );
+              "notification/display_notification_error",
+              "Could not find main activity class");
         }
         return null;
       }
@@ -97,9 +96,8 @@ public class DisplayNotificationTask extends AsyncTask<Void, Void, Void> {
 
       if (notification.containsKey("sound")) {
         Uri sound = RNFirebaseNotificationManager.getSound(
-          context,
-          notification.getString("sound")
-        );
+            context,
+            notification.getString("sound"));
         nb = nb.setSound(sound);
       }
 
@@ -278,16 +276,17 @@ public class DisplayNotificationTask extends AsyncTask<Void, Void, Void> {
         Double max = progress.getDouble("max");
         Double progressI = progress.getDouble("progress");
         nb = nb.setProgress(
-          max.intValue(),
-          progressI.intValue(),
-          progress.getBoolean("indeterminate")
-        );
+            max.intValue(),
+            progressI.intValue(),
+            progress.getBoolean("indeterminate"));
       }
 
       // TODO: Public version of notification
-      /* if (android.containsKey("publicVersion")) {
-        nb = nb.setPublicVersion();
-      } */
+      /*
+       * if (android.containsKey("publicVersion")) {
+       * nb = nb.setPublicVersion();
+       * }
+       */
 
       if (android.containsKey("remoteInputHistory")) {
         nb = nb.setRemoteInputHistory(android.getStringArray("remoteInputHistory"));
@@ -342,8 +341,8 @@ public class DisplayNotificationTask extends AsyncTask<Void, Void, Void> {
           long[] vibrateArray = new long[vibrate.size()];
           for (int i = 0; i < vibrate.size(); i++) {
             vibrateArray[i] = vibrate
-              .get(i)
-              .longValue();
+                .get(i)
+                .longValue();
           }
           nb = nb.setVibrate(vibrateArray);
         }
@@ -375,11 +374,10 @@ public class DisplayNotificationTask extends AsyncTask<Void, Void, Void> {
 
       // Create the notification intent
       PendingIntent contentIntent = createIntent(
-        context,
-        intentClass,
-        notification,
-        android.getString("clickAction")
-      );
+          context,
+          intentClass,
+          notification,
+          android.getString("clickAction"));
 
       nb = nb.setContentIntent(contentIntent);
 
@@ -389,10 +387,9 @@ public class DisplayNotificationTask extends AsyncTask<Void, Void, Void> {
 
       if (reactContextWeakReference.get() != null) {
         Utils.sendEvent(
-          reactContextWeakReference.get(),
-          "notifications_notification_displayed",
-          Arguments.fromBundle(notification)
-        );
+            reactContextWeakReference.get(),
+            "notifications_notification_displayed",
+            Arguments.fromBundle(notification));
       }
 
       if (promise != null) {
@@ -410,27 +407,24 @@ public class DisplayNotificationTask extends AsyncTask<Void, Void, Void> {
   }
 
   private NotificationCompat.Action createAction(
-    Context context,
-    Bundle action,
-    Class intentClass,
-    Bundle notification
-  ) {
+      Context context,
+      Bundle action,
+      Class intentClass,
+      Bundle notification) {
     String actionKey = action.getString("action");
     boolean showUserInterface = action.containsKey("showUserInterface") && action.getBoolean(
-      "showUserInterface");
+        "showUserInterface");
 
-    PendingIntent actionIntent = showUserInterface ?
-      createIntent(context, intentClass, notification, actionKey) :
-      createBroadcastIntent(context, notification, actionKey);
+    PendingIntent actionIntent = showUserInterface ? createIntent(context, intentClass, notification, actionKey)
+        : createBroadcastIntent(context, notification, actionKey);
 
     int icon = getIcon(action.getString("icon"));
     String title = action.getString("title");
 
     NotificationCompat.Action.Builder ab = new NotificationCompat.Action.Builder(
-      icon,
-      title,
-      actionIntent
-    );
+        icon,
+        title,
+        actionIntent);
 
     if (action.containsKey("allowGeneratedReplies")) {
       ab = ab.setAllowGeneratedReplies(action.getBoolean("allowGeneratedReplies"));
@@ -446,22 +440,21 @@ public class DisplayNotificationTask extends AsyncTask<Void, Void, Void> {
 
     // TODO: SemanticAction and ShowsUserInterface only available on v28?
     // if (action.containsKey("semanticAction")) {
-    //   Double semanticAction = action.getDouble("semanticAction");
-    //   ab = ab.setSemanticAction(semanticAction.intValue());
+    // Double semanticAction = action.getDouble("semanticAction");
+    // ab = ab.setSemanticAction(semanticAction.intValue());
     // }
     // if (action.containsKey("showsUserInterface")) {
-    //   ab = ab.setShowsUserInterface(action.getBoolean("showsUserInterface"));
+    // ab = ab.setShowsUserInterface(action.getBoolean("showsUserInterface"));
     // }
 
     return ab.build();
   }
 
   private PendingIntent createIntent(
-    Context context,
-    Class intentClass,
-    Bundle notification,
-    String action
-  ) {
+      Context context,
+      Class intentClass,
+      Bundle notification,
+      String action) {
     Intent intent = new Intent(context, intentClass);
     intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
     intent.putExtras(notification);
@@ -471,12 +464,11 @@ public class DisplayNotificationTask extends AsyncTask<Void, Void, Void> {
     }
 
     String notificationId = notification.getString("notificationId");
-    return PendingIntent.getActivity(
-      context,
-      notificationId.hashCode(),
-      intent,
-      PendingIntent.FLAG_UPDATE_CURRENT
-    );
+    int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+        ? PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        : PendingIntent.FLAG_UPDATE_CURRENT;
+    return PendingIntent.getBroadcast(context, notificationId.hashCode(), intent, flags);
+
   }
 
   private PendingIntent createBroadcastIntent(Context context, Bundle notification, String action) {
@@ -488,12 +480,11 @@ public class DisplayNotificationTask extends AsyncTask<Void, Void, Void> {
     intent.putExtra("notification", notification);
     intent.setAction("io.invertase.firebase.notifications.BackgroundAction");
 
-    return PendingIntent.getBroadcast(
-      context,
-      notificationId.hashCode(),
-      intent,
-      PendingIntent.FLAG_UPDATE_CURRENT
-    );
+    int flags = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+        ? PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE
+        : PendingIntent.FLAG_UPDATE_CURRENT;
+    return PendingIntent.getBroadcast(context, notificationId.hashCode(), intent, flags);
+
   }
 
   private RemoteInput createRemoteInput(Bundle remoteInput) {
@@ -534,9 +525,8 @@ public class DisplayNotificationTask extends AsyncTask<Void, Void, Void> {
 
     int largeIconResId = getIcon(image);
     return BitmapFactory.decodeResource(
-      contextWeakReference.get().getResources(),
-      largeIconResId
-    );
+        contextWeakReference.get().getResources(),
+        largeIconResId);
   }
 
   private Bitmap getBitmapFromUrl(String imageUrl) {
@@ -553,17 +543,15 @@ public class DisplayNotificationTask extends AsyncTask<Void, Void, Void> {
 
   private int getIcon(String icon) {
     int resourceId = RNFirebaseNotificationManager.getResourceId(
-      contextWeakReference.get(),
-      "mipmap",
-      icon
-    );
+        contextWeakReference.get(),
+        "mipmap",
+        icon);
 
     if (resourceId == 0) {
       resourceId = RNFirebaseNotificationManager.getResourceId(
-        contextWeakReference.get(),
-        "drawable",
-        icon
-      );
+          contextWeakReference.get(),
+          "drawable",
+          icon);
     }
 
     return resourceId;
@@ -572,8 +560,8 @@ public class DisplayNotificationTask extends AsyncTask<Void, Void, Void> {
   private Class getMainActivityClass(Context context) {
     String packageName = context.getPackageName();
     Intent launchIntent = context
-      .getPackageManager()
-      .getLaunchIntentForPackage(packageName);
+        .getPackageManager()
+        .getLaunchIntentForPackage(packageName);
 
     try {
       return Class.forName(launchIntent.getComponent().getClassName());
